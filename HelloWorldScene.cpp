@@ -86,13 +86,21 @@ void HelloWorld::Notification(CCObject* obj)
 void HelloWorld::InitStage()
 {
     char temp[30];
-    sprintf(temp, "stage/stage_%d.xml", stageNumber);
+    sprintf(temp, "stage_%d.xml", stageNumber);
+    
+    std::vector<std::string> searchPaths;
+    searchPaths.push_back("stage/");
+    FileUtils::getInstance()->setSearchResolutionsOrder(searchPaths);
     
     std::string filepath = FileUtils::getInstance()->fullPathForFilename(temp);
-    CCLOG("filepath = %s", filepath.c_str());
+    //CCLOG("filepath = %s", filepath.c_str());
+    
+    ssize_t size = 0;
+    unsigned char* pData;
+    pData = FileUtils::getInstance()->getFileData(filepath.c_str(), "rb", &size);
     
     xml_document xmlDoc;
-    xml_parse_result result = xmlDoc.load_file(filepath.c_str());
+    xml_parse_result result = xmlDoc.load_buffer(pData, size);
     if (!result)
     {
         CCLOG("%s", result.description());
